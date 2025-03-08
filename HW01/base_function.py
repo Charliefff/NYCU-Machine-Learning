@@ -10,8 +10,8 @@ def build_zero_matrix(n: int, m: int) -> list:
 def transpose(A: list) -> list:
     assert check_2D_list(A), "Input must be a 2D matrix."
     
-    rows, cols = len(A), len(A[0])  # 計算行數與列數
-    transposed = build_zero_matrix(cols, rows)  # 創建轉置矩陣
+    rows, cols = len(A), len(A[0])  
+    transposed = build_zero_matrix(cols, rows) 
     
     for i in range(rows):
         for j in range(cols):
@@ -92,9 +92,6 @@ def backward_substitution(U: list, y: list) -> list:
     return x
 
 def LU_solve_A_invert(A, b):
-    if isinstance(b[0], list):  # 如果 b 是 2D list，轉成 1D
-        b = [row[0] for row in b]
-
     L, U = LU_decomposition(A)
     y = forward_substitution(L, b)
     x = backward_substitution(U, y)
@@ -105,7 +102,7 @@ def LU_solve_A_invert(A, b):
     
 if __name__ == "__main__":
     
-    x = [1, 2, 3, 4, 5]  # 用標準 Python list 取代 np.array
+    x = [1, 2, 3, 4, 5]  
     degree = 3
 
     A = polynomial_basis(x, degree)

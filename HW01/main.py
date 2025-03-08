@@ -8,7 +8,7 @@ from typing import Tuple
 def plot_regression_curve(x, y, coefficients, degree, lambd):
     plt.scatter(x, y, label='Data points', color='blue')
     x_line = np.linspace(min(x) - 1, max(x) + 1, 100)
-    y_line = np.dot(polynomial_basis(x_line, degree), coefficients).flatten()  # (n, 1) -> (n, )
+    y_line = (polynomial_basis(x_line, degree), coefficients).flatten()  # (n, 1) -> (n, )
     plt.plot(x_line, y_line, color='red', label='Fitted polynomial curve')
     plt.xlabel('x')
     plt.ylabel('y')
@@ -16,6 +16,23 @@ def plot_regression_curve(x, y, coefficients, degree, lambd):
     plt.title(f'Polynomial Regression (Degree {degree}) with λ={lambd}')
     plt.show()
 
+def plot_regression_curve(x, y, coefficients, degree, lambd):
+    plt.scatter(x, y, label="Data points", color="blue")
+
+    x_line = np.linspace(min(x) - 1, max(x) + 1, 100)    
+    basis_matrix = polynomial_basis(x_line, degree)  # (n, degree)
+    y_line = np.dot(basis_matrix, [[c] for c in coefficients])  # (n, 1)
+    
+    # 轉換回 1D list
+    y_line = [yi[0] for yi in y_line]
+
+    plt.plot(x_line, y_line, color="red", label="Fitted polynomial curve")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.legend()
+    plt.title(f"Polynomial Regression (Degree {degree}) with λ={lambd}")
+    plt.show()
+    
 def get_parser():
     parser = argparse.ArgumentParser(description="Load dataset and process it.")
     parser.add_argument("-f", "--file_path", type=str, default="/home/charlie/data/2025_ML/HW01/test.txt",
