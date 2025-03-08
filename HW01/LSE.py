@@ -1,48 +1,29 @@
-from base_function import load_data, polynomial_basis, plot_regression_curve, get_parser
-import numpy as np
-import matplotlib.pyplot as plt
+from base_function import (polynomial_basis, 
+                           transpose, 
+                           matrix_multiplication, 
+                           identity_matrix, 
+                           add_matrix,
+                           LU_solve_A_invert)
 
-def rLSE(x, y, degree, lambd):
+def rLSE(x: list, y: list, degree, lambd):
     
     A = polynomial_basis(x, degree) 
-    A_transpose = A.T  # 轉置
-    A_transpose_A = A_transpose @ A 
-    y_reshape = y.reshape(-1, 1)  
-    A_transpose_y = A_transpose @ y_reshape 
-    reg_matrix = A_transpose_A + lambd * np.eye(A_transpose_A.shape[0])
-    coefficients = np.linalg.solve(reg_matrix, A_transpose_y)
-    y_pred = A @ coefficients
-    total_error = np.sum((y_pred - y_reshape) ** 2)
+    A_transpose = transpose(A)
+    A_transpose_A = matrix_multiplication(A_transpose, A)
+    y_reshape = [[yi] for yi in y]  
     
+    A_transpose_y = matrix_multiplication(A_transpose, y_reshape)
+
+    identity = identity_matrix(len(A_transpose_A))
+    scaled_identity = [[lambd * identity[i][j] for j in range(len(identity[0]))] for i in range(len(identity))]
+    
+    reg_matrix = add_matrix(A_transpose_A, scaled_identity)
+    
+    coefficients = LU_solve_A_invert(reg_matrix, A_transpose_y)  # 解 Ax = b
+    
+    y_pred = matrix_multiplication(A, coefficients)
+    y_pred = [[y_p] for y_p in y_pred]
+    
+    total_error = sum((y_pred[i][0] - y_reshape[i][0]) ** 2 for i in range(len(y_reshape)))  # 手動平方誤差
+
     return coefficients, y_pred, total_error
-
-def plot_regression_curve(x, y, coefficients, degree, lambd):
-    
-    plt.figure(figsize=(15, 6))  
-    plt.scatter(x, y, label="Data points", color="blue")  
-    
-    # 生成 x 軸範圍
-    x_line = np.linspace(min(x) - 1, max(x) + 1, 100)  
-    A_line = polynomial_basis(x_line, degree)
-    y_line = A_line @ coefficients  
-    
-    plt.plot(x_line, y_line, color="red", label=f"Fitted polynomial (Degree {degree})")
-    
-    # 設定圖表標籤
-    plt.xlabel("x")
-    plt.ylabel("y")
-    plt.legend()
-    plt.title(f"Polynomial Regression (Degree {degree}) with λ={lambd}")
-    plt.savefig('./picture/output.png')
-    
-if __name__ == "__main__":
-
-    args = get_parser().parse_args()
-    x, y = load_data(args.file_path)
-    coefficients, y_pred, total_error = rLSE(x, y, args.degree, args.lambd)
-    
-    print(coefficients, "\n")
-    print(total_error)
-    plot_regression_curve(x, y, coefficients, degree=2, lambd=0)
-    
-
