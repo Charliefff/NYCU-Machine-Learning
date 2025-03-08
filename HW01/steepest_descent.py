@@ -1,9 +1,6 @@
 from base_function import (polynomial_basis, 
                            transpose, 
-                           matrix_multiplication, 
-                           identity_matrix, 
-                           add_matrix,
-                           LU_solve_A_invert)
+                           matrix_multiplication)
 def compute_gradient(A, y, coefficients, lambd, epsilon):
     
     coefficients_reshape = [[c] for c in coefficients]  
@@ -29,15 +26,13 @@ def steepest_descent(A, y, degree, lambd, learning_rate=1e-4, tol=1e-10, max_ite
     for _ in range(max_iter):
         gradient = compute_gradient(A, y, coefficients_old, lambd, epsilon)
 
-        # 更新係數
         coefficients_new = [coefficients_old[i] - learning_rate * gradient[i][0] for i in range(degree)]
-
-        # **收斂條件：梯度變化趨近 0**
+        
         diff_norm = sum(abs(coefficients_new[i] - coefficients_old[i]) for i in range(degree))
         if diff_norm < tol:
             break
 
-        coefficients_old = coefficients_new  # 更新迭代變數
+        coefficients_old = coefficients_new  
 
     return coefficients_new
 
@@ -51,7 +46,7 @@ def linear_regression_via_steepest_descent(x, y, degree, lambd, epsilon):
     coefficients = steepest_descent(A, y, degree, lambd, epsilon)
 
     y_pred = matrix_multiplication(A, [[c] for c in coefficients])  # (n, 1)
-    y_pred = [row[0] for row in y_pred]  # 轉成 1D list
+    y_pred = [row[0] for row in y_pred]  # to 1D list
 
     total_error = sum((y_pred[i] - y[i]) ** 2 for i in range(len(y)))
 
