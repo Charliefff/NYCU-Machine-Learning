@@ -27,10 +27,11 @@ def plot_regression_curve(x, y, coefficients, degree, lambd):
 
 def get_parser():
     parser = argparse.ArgumentParser(description="Load dataset and process it.")
-    parser.add_argument("-f", "--file_path", type=str, default="/home/charlie/data/2025_ML/hw01/test.txt",
+    parser.add_argument("-f", "--file_path", type=str, default="/home/charlie/data/2025_ML/HW01/test.txt",
                         help="Path to the dataset file (CSV format)")
     parser.add_argument("-d", "--degree", type=int, default=1, help="Polynomial degree")
     parser.add_argument("-l", "--lambd", type=float, default=1.0, help="Regularization lambda")
+    parser.add_argument("-o", "--output", type=str, default="./picture/output.png", help="Output file path")
     return parser
 
 if __name__ == "__main__":
@@ -39,14 +40,3 @@ if __name__ == "__main__":
         args = get_parser().parse_args()
     else:
         args = argparse.Namespace(file_path="/home/charlie/data/2025_ML/hw01/test.txt", degree=1, lambd=1.0)
-
-    base = Base(file_path=args.file_path, 
-                degree=args.degree, 
-                lambd=args.lambd)
-
-    # 測試輸出
-    print("file_path:", base.file_path)
-    print("x:", base.x)
-    print("y:", base.y)
-    print("lambda:", base.lambd)
-    print("degree:", base.degree)

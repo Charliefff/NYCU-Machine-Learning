@@ -9,11 +9,8 @@ def rLSE(x, y, degree, lambd):
     A_transpose_A = A_transpose @ A 
     y_reshape = y.reshape(-1, 1)  
     A_transpose_y = A_transpose @ y_reshape 
-                  
     reg_matrix = A_transpose_A + lambd * np.eye(A_transpose_A.shape[0])
-    
     coefficients = np.linalg.solve(reg_matrix, A_transpose_y)
-
     y_pred = A @ coefficients
     total_error = np.sum((y_pred - y_reshape) ** 2)
     
@@ -36,15 +33,13 @@ def plot_regression_curve(x, y, coefficients, degree, lambd):
     plt.ylabel("y")
     plt.legend()
     plt.title(f"Polynomial Regression (Degree {degree}) with λ={lambd}")
-    plt.savefig('/home/charlie/data/2025_ML/hw01/picture/output.png')
+    plt.savefig('./picture/output.png')
     
 if __name__ == "__main__":
 
-    x, y = load_data('/home/charlie/data/2025_ML/hw01/test.txt')
-
-    coefficients, y_pred, total_error = rLSE(x, y, degree=2, lambd=0)
-
-
+    args = get_parser().parse_args()
+    x, y = load_data(args.file_path)
+    coefficients, y_pred, total_error = rLSE(x, y, args.degree, args.lambd)
     
     print(coefficients, "\n")
     print(total_error)
