@@ -99,8 +99,65 @@ def LU_solve_A_invert(A, b):
 def mean_squared_error(y_pred: list, y: list) -> float:
     return sum((y_pred[i][0] - y[i][0]) ** 2 for i in range(len(y)))
 
+def linear_regression_via_steepest_descent(x, y, method, degree, lambd, epsilon):
+    # 產生 (n, degree) 矩陣
+    A = polynomial_basis(x, degree)
+
+    # 確保 y 是 (n,) 1D list
+    if isinstance(y[0], list):
+        y = [row[0] for row in y]
+
+    # 執行最陡下降法
+    coefficients = method(A, y, degree, lambd, epsilon=epsilon)
+
+    # 計算預測值 y_pred = A * w
+    y_pred_2d = matrix_multiplication(A, [[c] for c in coefficients])  # (n,) or (n,1)
+    # 若回傳 (n,) => 轉成 (n,1)
+    if isinstance(y_pred_2d[0], float):
+        y_pred_2d = [[val] for val in y_pred_2d]
+
+    # 將 (n,1) 轉成 (n,)
+    y_pred = [row[0] for row in y_pred_2d]
+
+    # 計算 MSE
+    total_error = mean_squared_error(y_pred, y)
+
     
-    
+    equation = "Fitting line: "
+    for i, coef in enumerate(coefficients[::-1]):
+        power = (degree - 1 - i)
+        if i == 0:
+            # leading coefficient
+            equation += f"{coef:.10f}X^{power}"
+        else:
+            if i == (degree - 1):
+                # 常數項
+                sign_str = "+" if coef > 0 else "-"
+                equation += f" {sign_str} {abs(coef):.10f}"
+            else:
+                # 其他項
+                sign_str = "+" if coef > 0 else "-"
+                equation += f" {sign_str} {abs(coef):.10f}X^{power}"
+
+    print("Steepest descent method:")
+    print(equation)
+    print(f"Total Error: {total_error:.10f}")
+
+    return coefficients
+
+def compute_hessian_and_gradient(A, y, coefficients):
+    coefficients_reshape = coefficients.reshape(-1, 1)  # (degree, ) -> (degree, 1)
+    residuals = matrix_multiplication(A, coefficients_reshape).flatten() - y  # Aw - y
+    A_transpose = transpose(A)
+
+    # gradient = 2 * A^T(Aw - y)
+    gradient = 2 * matrix_multiplication(A_transpose, residuals.reshape(-1, 1))
+
+    # hessian = 2 * (A^T)A
+    hessian = 2 * matrix_multiplication(A_transpose, A)
+
+    return gradient, hessian
+ 
 if __name__ == "__main__":
     
     x = [1, 2, 3, 4, 5]  

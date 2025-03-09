@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from base_function import polynomial_basis
+from base_function import polynomial_basis, linear_regression_via_steepest_descent
 import argparse
 from LSE import rLSE
 from typing import Tuple
-from steepest_descent import linear_regression_via_steepest_descent
+from steepest_descent import steepest_descent
 
 def plot_regression_curve(x, y, coefficients, degree, lambd):
     plt.scatter(x, y, label="Data points", color="blue")
@@ -49,7 +49,7 @@ def run_LSE(x, y, degree, lambd, args):
     plot_regression_curve(x, y, coefficients, args.degree, args.lambd)
     
 def run_steepest_descent(x, y, degree, lambd, args):
-    coefficients = linear_regression_via_steepest_descent(x, y, degree, lambd, epsilon=1e-10)
+    coefficients = linear_regression_via_steepest_descent(x, y, steepest_descent, degree, lambd, epsilon=1e-10)
     print("Coefficients:\n", coefficients, "\n")
     plot_regression_curve(x, y, coefficients, degree, lambd)
     
