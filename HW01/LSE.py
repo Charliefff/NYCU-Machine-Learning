@@ -3,7 +3,8 @@ from base_function import (polynomial_basis,
                            matrix_multiplication, 
                            identity_matrix, 
                            add_matrix,
-                           LU_solve_A_invert)
+                           LU_solve_A_invert, 
+                           mean_squared_error)
 
 def rLSE(x: list, y: list, degree, lambd):
     
@@ -23,7 +24,7 @@ def rLSE(x: list, y: list, degree, lambd):
     
     y_pred = matrix_multiplication(A, coefficients)
     y_pred = [[y_p] for y_p in y_pred]
+    total_error = mean_squared_error(y_pred, y_reshape)
     
-    total_error = sum((y_pred[i][0] - y_reshape[i][0]) ** 2 for i in range(len(y_reshape)))  # 手動平方誤差
 
     return coefficients, y_pred, total_error

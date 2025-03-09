@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-
 def polynomial_basis(x: list, degree: int) -> list:
     basis = [[xi ** i for i in range(degree)] for xi in x]  
     return basis  # (len(x), degree)
@@ -97,6 +95,9 @@ def LU_solve_A_invert(A, b):
     x = backward_substitution(U, y)
     
     return x
+
+def mean_squared_error(y_pred: list, y: list) -> float:
+    return sum((y_pred[i][0] - y[i][0]) ** 2 for i in range(len(y)))
 
     
     

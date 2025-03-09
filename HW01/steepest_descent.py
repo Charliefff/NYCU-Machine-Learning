@@ -1,16 +1,19 @@
 from base_function import (polynomial_basis, 
                            transpose, 
-                           matrix_multiplication)
+                           matrix_multiplication,
+                           mean_squared_error)
+
 def compute_gradient(A, y, coefficients, lambd, epsilon):
     
     coefficients_reshape = [[c] for c in coefficients]  
 
     residuals = matrix_multiplication(A, coefficients_reshape)  # (n, 1)
+    residuals = [[r] for r in residuals]  
     residuals = [[residuals[i][0] - y[i]] for i in range(len(y))]  # (n, 1)
 
     A_transpose = transpose(A)
     gradient_ls = matrix_multiplication(A_transpose, residuals)
-
+    gradient_ls = [[g] for g in gradient_ls]  # (degree, 1)
     #  L1 norm
     gradient_l1_approx = [[c / (c**2 + epsilon) ** 0.5] for c in coefficients]  
 
@@ -46,9 +49,11 @@ def linear_regression_via_steepest_descent(x, y, degree, lambd, epsilon):
     coefficients = steepest_descent(A, y, degree, lambd, epsilon)
 
     y_pred = matrix_multiplication(A, [[c] for c in coefficients])  # (n, 1)
-    y_pred = [row[0] for row in y_pred]  # to 1D list
-
-    total_error = sum((y_pred[i] - y[i]) ** 2 for i in range(len(y)))
+    print(y_pred)
+    y_pred = [[row] for row in y_pred]  # to 1D list
+    y = [[row] for row in y]  # to 1D list
+    total_error = mean_squared_error(y_pred, y)
+    
 
     equation = "Fitting line: "
     for i, coef in enumerate(coefficients[::-1]):
